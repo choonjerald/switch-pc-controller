@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Switch input diagnostic</title>
+  <style>
+    * { box-sizing: border-box }
+    body { margin: 0 auto; padding: 16px; max-width: 56em; background: #151a20; color: #f2f6f9; font: 17px Arial,sans-serif }
+    h1 { font-size: 1.45em; margin: 0 0 .3em }
+    h2 { font-size: 1.1em; margin: 1em 0 .4em }
+    p { margin: .45em 0 }
+    button { padding: 10px 16px; margin: 4px 4px 4px 0; font: inherit }
+    button:focus { outline: 3px solid #fbbf24 }
+    #tap { width: 100%; min-height: 90px; border: 0; background: #99e9d7; color: #112922; font-size: 1.5em }
+    #tap:active { background: white }
+    pre { white-space: pre-wrap; overflow-wrap: break-word; font: 14px monospace; margin: .4em 0 }
+  </style>
+</head>
+<body data-run="@RUN@" data-ws="@WS@">
+  <h1>Switch input diagnostic</h1>
+  <p>PC run <strong>@RUN@</strong> · <span id="script">HTML loaded</span></p>
+  <button id="tap" type="button">Tap to echo</button>
+  <p id="ack" role="status">Waiting for first tap</p>
+  <label>Echo on
+    <select id="trigger">
+      <option value="click">Button click</option>
+      <option value="touch">Touch release</option>
+      <option value="pointer">Pointer release</option>
+    </select>
+  </label>
+  <h2>Transport tests</h2>
+  <button id="measure" type="button">Measure HTTP round trip</button>
+  <button id="socket" type="button">Test WebSocket</button>
+  <p id="stats"></p><p id="socket-result"></p>
+  <h2>Browser and controls</h2>
+  <pre id="info"></pre><pre id="pads"></pre>
+  <p>Tap or focus the echo button to inspect control events.</p>
+  <pre id="events"></pre>
+  <script src="/diagnostic.js"></script>
+</body>
+</html>

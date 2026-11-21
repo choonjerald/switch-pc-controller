@@ -1,0 +1,2 @@
+# Only for the optional --ws transport experiment.
+websockets>=15.0.1,<16

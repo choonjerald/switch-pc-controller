@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Switch macro pad</title>
+  <style>
+    * { box-sizing: border-box }
+    body { margin: 0; background: #11171c; color: #f0f4f5; font: 18px "Segoe UI",Arial,sans-serif }
+    main { max-width: 1100px; margin: auto; padding: 12px 18px }
+    header { display: flex; align-items: center; justify-content: space-between }
+    h1 { font-size: 1.3em; font-weight: 600; margin: .3em 0 }
+    h2 { font-size: 1.1em }
+    #connection { color: #b9c5c9; font-size: .85em }
+    #connection:before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 7px; background: #c49158 }
+    #connection.online:before { background: #7ddbc0 }
+    select, input, button { font: inherit; border-radius: 6px }
+    input, select { color: #f0f4f5; background: #242d34; border: 1px solid #617077; padding: .45em }
+    #pairing { max-width: 420px; margin: 10vh auto }
+    #pin { width: 8em }
+    button { padding: .5em .8em; border: 0; cursor: pointer }
+    #pair { background: #7ddbc0; color: #10231e }
+    nav { display: flex; padding: 4px; margin: 8px 0; background: #202a33; border-radius: 10px }
+    nav button { flex: 1; margin: 1px 2px; min-height: 44px; color: #d7e5ea; background: transparent; font-weight: 600 }
+    nav button[aria-pressed="true"] { background: #99e9d7; color: #152a29 }
+    #profiles { display: flex; overflow-x: auto; padding: 3px 0 7px }
+    #profiles button { flex: none; margin-right: 6px; min-height: 40px; color: #cbd7df; background: #202a33 }
+    #profiles button[aria-pressed="true"] { color: #fff; background: #364950; box-shadow: inset 0 -3px #99e9d7 }
+    #grid { display: flex; flex-wrap: wrap; margin: -3px }
+    .cell { width: 33.333%; padding: 3px }
+    .tile { text-align: left; width: 100%; height: 20vh; min-height: 58px; max-height: 150px; padding: .6em .9em;
+      background: #212b32; color: #f3f6f7; border-left: 4px solid; overflow: hidden }
+    .tile:focus, button:focus, select:focus { outline: 2px solid #e5f4ff; outline-offset: -2px }
+    .tile:active, .tile.sending { background: #38514e }
+    .tile.empty { background: #192126; border: 1px dashed #384148 }
+    .icon { display: inline-block; min-width: 2.2em; padding: .2em .35em; border: 1px solid;
+      border-radius: 4px; text-align: center; font: bold .8em/1.2 Arial,sans-serif }
+    .label { display: block; margin-top: .3em; font-weight: 600; overflow-wrap: break-word }
+    #feedback { margin: .45em 0; min-height: 1.2em; color: #c4d1d5; font-size: .9em }
+    #trackpad { width: 100%; flex: 1 0 64px; border: 2px solid #58736e; border-radius: 10px; background-color: #1d2d30;
+      background-image: radial-gradient(#375252 1px, transparent 1px); background-size: 16px 16px;
+      color: #d3e5df; display: block; text-align: center;
+      touch-action: none; user-select: none; -webkit-user-select: none }
+    #trackpad:active, #trackpad.tracking { border-color: #99e9d7 }
+    .pointer-buttons { display: flex; flex-wrap: wrap; flex: none; margin: 2px -2px 0 }
+    .pointer-buttons .controls { flex: 1 0 auto; margin: 0 }
+    .pointer-buttons button { flex: 1; min-height: 44px }
+    #backspace-pc { color: #ffcab9; box-shadow: inset 0 0 0 1px #a16f65; touch-action: manipulation; user-select: none; -webkit-user-select: none }
+    .controls { display: flex; flex-wrap: wrap; margin: .35em 0 }
+    .controls button, .keyrow button { background: #293841; color: #f0f4f5; margin: 2px; min-height: 40px }
+    .controls button:active, .keyrow button:active { background: #45625d }
+    #switch-app { background: #293841; color: #f0f4f5; min-height: 44px; flex: 0 0 auto }
+    .keyboard-actions { justify-content: center }
+    .keyboard-actions button { flex: 1 }
+    #keyboard-panel button, #switch-app { touch-action: manipulation }
+    #space-key { flex: 3 }
+    #shift-key[aria-pressed="true"] { background: #99e9d7; color: #152a29 }
+    main.immersive { position: fixed; top: 0; right: 0; bottom: 0; left: 0; max-width: none;
+      display: flex; flex-direction: column; padding: 4px 6px; overflow-y: auto }
+    .immersive header { position: absolute; right: 8px; bottom: 4px; pointer-events: none }
+    .immersive h1 { display: none }
+    .immersive #dashboard { display: flex; flex: 1 0 auto; flex-direction: column }
+    .immersive #dashboard nav { flex: none; margin: 0 0 4px; padding: 0 }
+    .immersive nav button, .immersive #switch-app { min-height: 40px; padding-top: .3em; padding-bottom: .3em }
+    .immersive #feedback { flex: none; line-height: 18px; min-height: 18px; margin: 1px 7em 0 2px }
+    .desktop-panel { display: flex; flex-direction: column; flex: 1 0 auto }
+    #keys { display: flex; flex-direction: column; flex: 4 0 auto }
+    .keyrow { display: flex; flex: 1 0 auto; justify-content: center }
+    .keyrow button { flex: 0 0 calc(10% - 4px); min-width: 0; padding: .15em 0; font-size: 1.3em }
+    #keyboard-panel > .keyboard-actions { flex: 1 0 auto; margin: 0 }
+    @media (max-height: 420px) { main { padding: 4px 10px } .tile { padding: .25em .5em } }
+    @media (max-width: 480px) { nav button { padding-left: .25em; padding-right: .25em; font-size: .85em } }
+  </style>
+</head>
+<body data-run="@RUN@">
+  <main id="workspace">
+    <header><h1>Switch macro pad</h1><span id="connection" role="status">Unpaired</span></header>
+    <section id="pairing">
+      <h2>Pair with Windows</h2>
+      <p><label for="pin">Enter the code from the PC.</label></p>
+      <input id="pin" maxlength="6" inputmode="numeric" autocomplete="off">
+      <button id="pair" type="button">Pair</button>
+    </section>
+    <section id="dashboard" style="display:none">
+      <nav aria-label="Controls">
+        <button id="mode-macros" type="button" aria-pressed="true" aria-controls="macros-panel">Macros</button>
+        <button id="mode-mouse" type="button" aria-pressed="false" aria-controls="mouse-panel">Trackpad</button>
+        <button id="mode-keyboard" type="button" aria-pressed="false" aria-controls="keyboard-panel">Keyboard</button>
+        <button id="switch-app" type="button" aria-controls="app-switcher" aria-expanded="false">Switch apps</button>
+      </nav>
+      <div id="app-switcher" class="controls keyboard-actions" role="group" aria-label="Windows app switcher" style="display:none">
+        <button id="switch-left" type="button">Previous</button>
+        <button id="switch-right" type="button">Next</button>
+        <button id="switch-select" type="button">Select</button>
+        <button id="switch-cancel" type="button">Cancel</button>
+      </div>
+      <div id="macros-panel"><div id="profiles" role="group" aria-label="Macro profiles"></div><div id="grid"></div></div>
+      <div id="mouse-panel" class="desktop-panel" style="display:none">
+        <button id="trackpad" type="button">Slide to move · Tap to point</button>
+        <div class="pointer-buttons"><div class="controls">
+          <button id="left-click" type="button">Left click</button><button id="right-click" type="button">Right click</button></div>
+          <div class="controls" role="group" aria-label="Nudge pointer">
+          <button id="nudge-left" type="button">Left</button><button id="nudge-up" type="button">Up</button>
+          <button id="nudge-down" type="button">Down</button><button id="nudge-right" type="button">Right</button>
+        </div></div>
+      </div>
+      <div id="keyboard-panel" class="desktop-panel" style="display:none">
+        <div id="keys" role="group" aria-label="Windows keyboard"></div>
+        <div class="controls keyboard-actions">
+          <button id="shift-key" type="button" aria-pressed="false">Shift</button>
+          <button id="tab-key" type="button">Tab</button>
+          <button id="space-key" type="button">Space</button>
+          <button id="enter-key" type="button">Enter</button>
+          <button id="backspace-pc" type="button" title="Tap once or hold to repeat">Backspace</button>
+        </div>
+      </div>
+    </section>
+    <p id="feedback" role="status"></p>
+  </main>
+  <script src="/desktop_controls.js"></script>
+  <script src="/dashboard.js"></script>
+</body></html>

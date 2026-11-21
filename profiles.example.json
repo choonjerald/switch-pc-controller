@@ -1,0 +1,151 @@
+[
+  {
+    "name": "Productivity",
+    "buttons": [
+      {
+        "label": "Copy",
+        "icon": "⧉",
+        "color": "#7ddbc0",
+        "steps": [
+          "tap Ctrl+C"
+        ]
+      },
+      {
+        "label": "Paste",
+        "icon": "▤",
+        "color": "#7ddbc0",
+        "steps": [
+          "tap Ctrl+V"
+        ]
+      },
+      {
+        "label": "Cut",
+        "icon": "✂",
+        "color": "#7ddbc0",
+        "steps": [
+          "tap Ctrl+X"
+        ]
+      },
+      {
+        "label": "Undo",
+        "icon": "↶",
+        "color": "#afafff",
+        "steps": [
+          "tap Ctrl+Z"
+        ]
+      },
+      {
+        "label": "Find",
+        "icon": "⌕",
+        "color": "#afafff",
+        "steps": [
+          "tap Ctrl+F"
+        ]
+      },
+      {
+        "label": "Select all",
+        "icon": "▦",
+        "color": "#afafff",
+        "steps": [
+          "tap Ctrl+A"
+        ]
+      },
+      {
+        "label": "Save",
+        "icon": "↓",
+        "color": "#efc381",
+        "steps": [
+          "tap Ctrl+S"
+        ]
+      },
+      {
+        "label": "Screenshot",
+        "icon": "⌗",
+        "color": "#efc381",
+        "steps": [
+          "tap Win+Shift+S"
+        ]
+      },
+      {
+        "label": "Notepad",
+        "icon": "▧",
+        "color": "#efc381",
+        "steps": [
+          "launch notepad"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Media",
+    "buttons": [
+      {
+        "label": "Previous",
+        "icon": "|◀",
+        "color": "#b4a0ff",
+        "steps": [
+          "tap PreviousTrack"
+        ]
+      },
+      {
+        "label": "Play / pause",
+        "icon": "▶Ⅱ",
+        "color": "#83e5c9",
+        "steps": [
+          "tap PlayPause"
+        ]
+      },
+      {
+        "label": "Next",
+        "icon": "▶|",
+        "color": "#b4a0ff",
+        "steps": [
+          "tap NextTrack"
+        ]
+      },
+      {
+        "label": "Volume down",
+        "icon": "−",
+        "color": "#87cbf1",
+        "steps": [
+          "tap VolumeDown"
+        ]
+      },
+      {
+        "label": "Mute",
+        "icon": "×",
+        "color": "#87cbf1",
+        "steps": [
+          "tap Mute"
+        ]
+      },
+      {
+        "label": "Volume up",
+        "icon": "+",
+        "color": "#87cbf1",
+        "steps": [
+          "tap VolumeUp"
+        ]
+      },
+      {
+        "label": "Stop",
+        "icon": "■",
+        "color": "#f0ad8c",
+        "steps": [
+          "tap MediaStop"
+        ]
+      },
+      {
+        "label": "Lower volume",
+        "icon": "↓↓",
+        "color": "#87cbf1",
+        "steps": [
+          "tap VolumeDown",
+          "wait 150",
+          "tap VolumeDown"
+        ]
+      },
+      null
+    ]
+  }
+]

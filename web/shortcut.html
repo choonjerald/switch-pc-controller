@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Windows shortcut trial</title>
+  <style>
+    body { margin: 1.2em auto; padding: 0 1em; max-width: 32em; background: #151a20; color: #f2f6f9; font: 20px Arial,sans-serif }
+    input, button { box-sizing: border-box; font: inherit; padding: .6em; margin: .3em 0 }
+    input { width: 8em }
+    #activate { background: #99e9d7; color: #112922; width: 100%; min-height: 5em; border: 0 }
+    #activate:active { background: white }
+  </style>
+</head>
+<body>
+  <h1>Windows shortcut trial</h1>
+  <div id="pairing">
+    <label for="pin">Pairing code from Windows</label><br>
+    <input id="pin" type="text" maxlength="6" inputmode="numeric" autocomplete="off">
+    <button id="pair" type="button">Pair</button>
+  </div>
+  <button id="activate" type="button" disabled>Send Windows shortcut</button>
+  <p id="status" role="status">On the PC, select Enable pairing.</p>
+  <script>
+    (function () {
+      "use strict";
+      function el(id) { return document.getElementById(id); }
+      var token = "", sequence = 0;
+      function request(path, value, callback) {
+        var done = false, xhr, timer;
+        function finish(code, message) {
+          if (done) { return; }
+          done = true;
+          clearTimeout(timer);
+          callback(code, message);
+        }
+        try {
+          xhr = new XMLHttpRequest();
+          xhr.open("POST", path, true);
+          xhr.setRequestHeader("X-Diagnostic-Run", "@RUN@");
+          if (token) { xhr.setRequestHeader("X-Session", token); }
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) { finish(xhr.status, xhr.responseText); }
+          };
+          timer = setTimeout(function () { finish(0, "Reply timed out. Check Windows."); xhr.abort(); }, 4000);
+          xhr.send(value);
+        } catch (e) { finish(0, "Connection failed."); }
+      }
+      el("pair").onclick = function () {
+        var pin = el("pin").value;
+        if (!/^[0-9]{6}$/.test(pin)) { el("status").textContent = "Enter the six-digit code."; return; }
+        el("pair").disabled = true;
+        el("pin").value = "";
+        request("/pair", pin, function (code, reply) {
+          el("pair").disabled = false;
+          if (code === 200 && /^[0-9a-f]{64}$/.test(reply)) {
+            token = reply;
+            sequence = 0;
+            el("activate").disabled = false;
+            el("pairing").style.display = "none";
+            el("status").textContent = "Paired. Focus the target window on the PC, then tap once.";
+          } else { el("status").textContent = reply || "Pairing failed."; }
+        });
+      };
+      el("activate").onclick = function () {
+        if (el("activate").disabled || !token) { return; }
+        el("activate").disabled = true;
+        el("status").textContent = "Sending…";
+        request("/activate", String(++sequence), function (code, reply) {
+          if (code === 403) { token = ""; el("pairing").style.display = ""; }
+          el("activate").disabled = !token;
+          el("status").textContent = reply || "Check the Windows window for the result.";
+        });
+      };
+    }());
+  </script>
+</body>
+</html>
