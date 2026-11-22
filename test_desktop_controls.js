@@ -98,7 +98,9 @@ const firstKey = el("keys").children.flatMap(row => row.children).find(button =>
 firstKey.fire("touchend", {changedTouches: [{clientX: 50, clientY: 50}]});
 firstKey.fire("click"); advance(1);
 assert.deepEqual(requests, [["/typing", "H"]]);
-el("shift-key").fire("click"); tapKey("i");
+el("symbols-key").fire("click");
+assert.equal(el("keys").children[0].children[0].textContent, "-");
+el("symbols-key").fire("click"); tapKey("i");
 el("space-key").fire("click"); el("enter-key").fire("click");
 el("switch-app").fire("click"); advance(81);
 assert.deepEqual(requests, [["/typing", "H"], ["/typing", "i "]]);

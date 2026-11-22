@@ -54,7 +54,7 @@
     .keyboard-actions button { flex: 1 }
     #keyboard-panel button, #switch-app { touch-action: manipulation }
     #space-key { flex: 3 }
-    #shift-key[aria-pressed="true"] { background: #99e9d7; color: #152a29 }
+    #shift-key[aria-pressed="true"], #symbols-key[aria-pressed="true"] { background: #99e9d7; color: #152a29 }
     main.immersive { position: fixed; top: 0; right: 0; bottom: 0; left: 0; max-width: none;
       display: flex; flex-direction: column; padding: 4px 6px; overflow-y: auto }
     .immersive header { position: absolute; right: 8px; bottom: 4px; pointer-events: none }
@@ -108,6 +108,7 @@
         <div id="keys" role="group" aria-label="Windows keyboard"></div>
         <div class="controls keyboard-actions">
           <button id="shift-key" type="button" aria-pressed="false">Shift</button>
+          <button id="symbols-key" type="button" aria-pressed="false" aria-label="Symbols">#+=</button>
           <button id="tab-key" type="button">Tab</button>
           <button id="space-key" type="button">Space</button>
           <button id="enter-key" type="button">Enter</button>

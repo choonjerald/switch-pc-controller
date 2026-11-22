@@ -6,7 +6,7 @@ function setupDesktopControls(send, feedback, connected) {
   var candidates = {}, owner = "", ignoreClickUntil = 0, ignoreMouseUntil = 0;
   var dx = 0, dy = 0, point = "", click = "";
   var timer = null, moving = false, generation = 0, lastPacket = 0;
-  var shifted = false;
+  var shifted = false, symbols = false;
 
   function forgetGesture() {
     candidates = {}; owner = ""; pad.className = "";
@@ -196,7 +196,8 @@ function setupDesktopControls(send, feedback, connected) {
   function buildKeys() {
     var keys = el("keys");
     keys.textContent = "";
-    var rows = shifted ? ["!@#$%^&*()", "QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM?:\""]
+    var rows = symbols ? ["-_=+[]{}\\|", ";:'\"`~<>/?", "!@#$%^&*()", "£¥¢§°±×÷¿¡"]
+             : shifted ? ["!@#$%^&*()", "QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM?:\""]
                        : ["1234567890", "qwertyuiop", "asdfghjkl", "zxcvbnm,.'"];
     rows.forEach(function (chars) {
       var row = document.createElement("div");
@@ -211,8 +212,10 @@ function setupDesktopControls(send, feedback, connected) {
       keys.appendChild(row);
     });
     el("shift-key").setAttribute("aria-pressed", String(shifted));
+    el("symbols-key").setAttribute("aria-pressed", String(symbols));
   }
-  bindKey(el("shift-key"), function () { shifted = !shifted; buildKeys(); });
+  bindKey(el("shift-key"), function () { shifted = !shifted; symbols = false; buildKeys(); });
+  bindKey(el("symbols-key"), function () { symbols = !symbols; shifted = false; buildKeys(); });
   bindKey(el("space-key"), function () { queueKey("/typing", " ", "Typing on PC"); });
   bindKey(el("tab-key"), function () { queueKey("/edit", "tab", "Tab sent"); });
   bindKey(el("enter-key"), function () { queueKey("/edit", "enter", "Enter sent"); });
@@ -281,7 +284,7 @@ function setupDesktopControls(send, feedback, connected) {
   }
   modes.forEach(function (name) { el("mode-" + name).onclick = function () { showMode(name); }; });
   function reset() {
-    stopInput(); showSwitcher(false); showMode("macros"); shifted = false; buildKeys();
+    stopInput(); showSwitcher(false); showMode("macros"); shifted = false; symbols = false; buildKeys();
   }
   return {stopInput: stopInput, reset: reset};
 }
